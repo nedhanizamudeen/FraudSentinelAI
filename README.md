@@ -1,5 +1,5 @@
 # FraudSentinel AI v2.2
-Autonomous Multi-Agent Fraud Detection System (Inference-Ready Backend)
+Autonomous Multi-Agent Financial Fraud Detection System (Inference-Ready Backend)
 
 --------------------------------------------------
 
@@ -22,7 +22,7 @@ CORE FEATURES
 - Inference-time risk adjustment layer
 - LLM-based explanations (optional)
 - Counterfactual analysis (what to change to avoid fraud)
-- Robust handling of messy or incomplete input data
+- Robust handling of noisy, incomplete, and real-world transactional data
 
 --------------------------------------------------
 
@@ -55,11 +55,33 @@ All models are pre-trained and stored in /models/
 
 --------------------------------------------------
 
+DATASET USED
+
+This project was trained using the IEEE-CIS Fraud Detection Dataset, a large-scale real-world financial transaction dataset released as part of the IEEE Computational Intelligence Society Fraud Detection competition on Kaggle.
+
+Dataset characteristics:
+- Transaction and identity-based features
+- Highly imbalanced fraud classification problem
+- Realistic financial transaction patterns
+- Designed for advanced fraud detection research
+
+The original training dataset is not included in this repository due to GitHub file size limitations and dataset licensing considerations.
+
+Dataset source:
+https://www.kaggle.com/competitions/ieee-fraud-detection
+
+--------------------------------------------------
+
 SETUP
 
 1. Create virtual environment
 
 python -m venv venv
+
+Windows:
+venv\Scripts\activate
+
+Linux / Mac:
 source venv/bin/activate
 
 2. Install dependencies
@@ -147,7 +169,7 @@ config.py            -> configuration
 
 FRONTEND
 
-A basic frontend is included.
+A lightweight frontend prototype is included for local testing and API interaction.
 
 Open in browser:
 
@@ -160,14 +182,8 @@ NOTES
 - Training dataset is NOT included
 - This package is inference-ready only
 - Designed for frontend integration
-- Works with real-world messy data
-
---------------------------------------------------
-
-AUTHORS
-
-Fathima Nizamudeen — Backend, ML, System Design
-[Friend Name] — Frontend Development
+- Uses pre-trained model artifacts
+- Built for experimentation, explainability, and deployment workflows
 
 --------------------------------------------------
 
@@ -179,6 +195,9 @@ This system demonstrates:
 - Explainable AI in financial systems
 - Robust real-world data handling
 - Production-style ML system design
+- Ensemble learning for fraud classification
+- Multi-agent orchestration for modular ML workflows
+- API-ready backend architecture
 
 --------------------------------------------------
 
@@ -187,21 +206,30 @@ NEXT STEPS
 - Connect frontend to backend
 - Deploy as API (Flask / FastAPI)
 - Add real-time transaction processing
+- Add monitoring and fraud analytics dashboard
 
 --------------------------------------------------
 
-## Connected frontend + backend (local run)
+CONNECTED FRONTEND + BACKEND (LOCAL RUN)
 
 1. Install dependencies:
-   `pip install -r requirements.txt`
+
+pip install -r requirements.txt
+
 2. Start the connected app:
-   `python app.py`
+
+python app.py
+
 3. Open in browser:
-   `http://127.0.0.1:8000`
 
-### API endpoints
-- `GET /health`
-- `POST /predict-single`
-- `POST /predict-csv`
+http://127.0.0.1:8000
 
-The API wrapper reuses the existing backend `InferenceAgent` and does not retrain or change model logic.
+--------------------------------------------------
+
+API ENDPOINTS
+
+- GET /health
+- POST /predict-single
+- POST /predict-csv
+
+The API wrapper reuses the existing backend InferenceAgent and does not retrain or modify the original model logic.
