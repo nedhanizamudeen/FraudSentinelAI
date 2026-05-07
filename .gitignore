@@ -7,3 +7,4 @@ inference_outputs/
 reports/
 catboost_info/
 *.zip
+data/
