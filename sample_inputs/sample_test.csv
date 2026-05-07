@@ -1,0 +1,4 @@
+amount,payment_method,card_type,card_network,billing_country,shipping_country,email_domain,receiver_email_domain
+120,card,credit,visa,US,US,gmail.com,gmail.com
+2500,online,debit,mastercard,US,RU,gmail.com,mail.ru
+85000,transfer,debit,unknown,unknown,unknown,fraud.com,fraud.com

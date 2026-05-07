@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-04-20 15:01:41",
+  "trained_model_names": [
+    "XGBoost",
+    "LightGBM",
+    "CatBoost",
+    "Stacking"
+  ],
+  "best_model": "Stacking Ensemble",
+  "feature_count": 225,
+  "feature_hash": "337420325058276cc03153339b617ff9b4e53319d8e60411928849fcf1f1a8f1",
+  "feature_pipeline_path": "C:\\Users\\nedha\\Downloads\\FraudSentinelAI_connected\\FraudSentinelAI-main\\models\\feature_pipeline.pkl"
+}

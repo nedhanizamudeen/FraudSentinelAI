@@ -1,0 +1,11 @@
+{
+  "amount": 6000,
+  "payment_method": "card",
+  "card_type": "credit",
+  "card_network": "visa",
+  "billing_country": "US",
+  "shipping_country": "US",
+  "email_domain": "gmail.com",
+  "receiver_email_domain": "gmail.com",
+  "transaction_hour": 2
+}

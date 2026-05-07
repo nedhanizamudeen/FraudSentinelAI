@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FraudSentinel AI — Connected Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <img src="fraudsentinel_crimson_logo.svg" width="34" height="38" alt="FraudSentinel logo" />
+      </div>
+      <div class="logo-text">
+        <span class="logo-name">FraudSentinel</span>
+        <span class="logo-ai">AI</span>
+        <div class="logo-version">Connected UI</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <a href="#" class="nav-item active" data-page="dashboard">Dashboard</a>
+      <a href="#" class="nav-item" data-page="single">Single Analysis</a>
+      <a href="#" class="nav-item" data-page="csv">CSV Batch Analysis</a>
+      <a href="#" class="nav-item" data-page="about">About the System</a>
+    </nav>
+
+    <div class="sidebar-status">
+      <div class="status-indicator">
+        <div class="status-dot pulse" id="apiDot"></div>
+        <span id="apiStatusLabel">Checking API…</span>
+      </div>
+      <div class="status-model">Stacking Ensemble · Live backend</div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <div class="page-breadcrumb" id="breadcrumb">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-time" id="topbarTime"></div>
+        <div class="profile-avatar">FS</div>
+      </div>
+    </header>
+
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Overview</h1>
+          <p class="page-subtitle">Connected frontend with real backend health and live session analytics.</p>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">API Status</div>
+          <div class="kpi-value" id="kpiApiStatus">—</div>
+          <div class="kpi-delta" id="kpiApiSub">Waiting for health check</div>
+        </div>
+        <div class="kpi-card accent">
+          <div class="kpi-label">Artifacts Ready</div>
+          <div class="kpi-value" id="kpiArtifacts">—</div>
+          <div class="kpi-delta" id="kpiArtifactsSub">Model readiness</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Session Rows Scored</div>
+          <div class="kpi-value" id="kpiRowsScored">0</div>
+          <div class="kpi-delta">Updated after CSV analysis</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Session Fraud Count</div>
+          <div class="kpi-value" id="kpiFraudCount">0</div>
+          <div class="kpi-delta">From real uploaded batch results</div>
+        </div>
+        <div class="kpi-card warn">
+          <div class="kpi-label">Estimated Impact</div>
+          <div class="kpi-value" id="kpiImpact">$0.00</div>
+          <div class="kpi-delta warn-text">Live from backend output</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card wide">
+          <div class="chart-header">
+            <div class="chart-title">Live Batch Verdict Distribution</div>
+            <div class="chart-meta">Built only after real CSV inference</div>
+          </div>
+          <div class="canvas-wrap"><canvas id="dashboardVerdictChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title">Risk Level Mix</div>
+          </div>
+          <div class="canvas-wrap"><canvas id="dashboardRiskChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="bottom-row">
+        <div class="model-card">
+          <div class="chart-header">
+            <div class="chart-title">System Overview</div>
+          </div>
+          <div class="stack-list" id="systemOverview">
+            <div class="stack-item"><span>API wrapper</span><strong>Thin Flask layer</strong></div>
+            <div class="stack-item"><span>Inference path</span><strong>Existing backend agent</strong></div>
+            <div class="stack-item"><span>Single analysis</span><strong>Real /predict-single</strong></div>
+            <div class="stack-item"><span>Batch analysis</span><strong>Real /predict-csv</strong></div>
+          </div>
+        </div>
+        <div class="recent-card">
+          <div class="chart-header">
+            <div class="chart-title">Recent Stats</div>
+          </div>
+          <div class="recent-list" id="recentStats">
+            <div class="recent-item static">Run a real CSV batch analysis to populate live stats and charts.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-single">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Single Transaction Analysis</h1>
+          <p class="page-subtitle">User-friendly form mapped to the existing backend inference pipeline.</p>
+        </div>
+      </div>
+
+      <div class="content-grid two-col">
+        <div class="panel">
+          <div class="panel-title">Transaction Input</div>
+          <form id="singleForm" class="form-grid">
+            <label>
+              <span>Amount</span>
+              <input type="number" step="0.01" min="0" name="amount" placeholder="1200.00" required />
+            </label>
+            <label>
+              <span>Payment Method</span>
+              <select name="payment_method">
+                <option value="">Auto-detect</option>
+                <option value="card">Card</option>
+                <option value="wallet">Wallet</option>
+                <option value="transfer">Transfer</option>
+                <option value="cash">Cash</option>
+              </select>
+            </label>
+            <label>
+              <span>Card Type</span>
+              <select name="card_type">
+                <option value="">Unknown</option>
+                <option value="credit">Credit</option>
+                <option value="debit">Debit</option>
+                <option value="charge card">Charge Card</option>
+                <option value="prepaid">Prepaid</option>
+              </select>
+            </label>
+            <label>
+              <span>Card Network</span>
+              <select name="card_network">
+                <option value="">Unknown</option>
+                <option value="visa">Visa</option>
+                <option value="mastercard">Mastercard</option>
+                <option value="discover">Discover</option>
+                <option value="american express">American Express</option>
+              </select>
+            </label>
+            <label>
+              <span>Billing Country</span>
+              <input type="text" name="billing_country" placeholder="United States" />
+            </label>
+            <label>
+              <span>Shipping Country</span>
+              <input type="text" name="shipping_country" placeholder="United States" />
+            </label>
+            <label>
+              <span>Payer Email Domain</span>
+              <input type="text" name="email_domain" placeholder="gmail.com" />
+            </label>
+            <label>
+              <span>Receiver Email Domain</span>
+              <input type="text" name="receiver_email_domain" placeholder="merchant.com" />
+            </label>
+            <label>
+              <span>Transaction Hour</span>
+              <input type="number" name="transaction_hour" min="0" max="23" placeholder="14" />
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Analyze Transaction</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Result Snapshot</div>
+          <div id="singleLoading" class="loading hidden">Running real backend prediction…</div>
+          <div id="singleError" class="error-box hidden"></div>
+          <div id="singleEmpty" class="empty-box">Submit a transaction to see the live backend verdict.</div>
+          <div id="singleResult" class="hidden">
+            <div class="result-grid">
+              <div class="metric-box accent"><span>Final Verdict</span><strong id="singleFinalVerdict">—</strong></div>
+              <div class="metric-box"><span>Adjusted Risk Level</span><strong id="singleRiskLevel">—</strong></div>
+              <div class="metric-box"><span>Adjusted Risk Score</span><strong id="singleRiskScore">—</strong></div>
+              <div class="metric-box"><span>Fraud Probability</span><strong id="singleFraudProb">—</strong></div>
+              <div class="metric-box"><span>Recommendation</span><strong id="singleRecommendation">—</strong></div>
+              <div class="metric-box warn"><span>Estimated Loss</span><strong id="singleLoss">—</strong></div>
+            </div>
+            <div class="text-card"><h3>Executive Summary</h3><p id="singleExecutiveSummary"></p></div>
+            <div class="text-card"><h3>LLM Explanation</h3><p id="singleExplanation"></p></div>
+            <div class="text-card"><h3>Counterfactual Summary</h3><p id="singleCounterfactual"></p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-csv">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">CSV Batch Analysis</h1>
+          <p class="page-subtitle">Upload a CSV, score it through the real backend, then render charts from actual prediction output.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Upload Batch File</div>
+        <form id="csvForm" class="upload-row">
+          <input type="file" id="csvFile" accept=".csv" required />
+          <button type="submit" class="btn-primary">Score CSV</button>
+        </form>
+        <div id="csvLoading" class="loading hidden">Uploading CSV and waiting for backend predictions…</div>
+        <div id="csvError" class="error-box hidden"></div>
+      </div>
+
+      <div id="csvResults" class="hidden page-substack">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Rows Scored</div><div class="kpi-value" id="csvRowsScored">0</div></div>
+          <div class="kpi-card accent"><div class="kpi-label">Fraud Count</div><div class="kpi-value" id="csvFraudCount">0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Legitimate Count</div><div class="kpi-value" id="csvLegitCount">0</div></div>
+          <div class="kpi-card"><div class="kpi-label">Avg Fraud Probability</div><div class="kpi-value" id="csvAvgFraudProb">0%</div></div>
+          <div class="kpi-card"><div class="kpi-label">Avg Adjusted Risk</div><div class="kpi-value" id="csvAvgRiskScore">0%</div></div>
+          <div class="kpi-card warn"><div class="kpi-label">Total Impact</div><div class="kpi-value" id="csvTotalImpact">$0.00</div></div>
+        </div>
+
+        <div class="charts-grid two-up">
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">Final Verdicts</div></div>
+            <div class="canvas-wrap"><canvas id="csvVerdictChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">Adjusted Risk Levels</div></div>
+            <div class="canvas-wrap"><canvas id="csvRiskLevelChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">Adjusted Risk Score Distribution</div></div>
+            <div class="canvas-wrap"><canvas id="csvRiskScoreChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><div class="chart-title">Fraud Probability Distribution</div></div>
+            <div class="canvas-wrap"><canvas id="csvFraudProbChart"></canvas></div>
+          </div>
+          <div class="chart-card wide-span">
+            <div class="chart-header"><div class="chart-title">Estimated Loss by Verdict</div></div>
+            <div class="canvas-wrap"><canvas id="csvEstimatedLossChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Batch Executive Summary</div>
+          <p id="csvExecutiveSummary" class="summary-text"></p>
+          <div style="margin-top: 16px;">
+            <button id="downloadCsvBtn" class="btn-primary hidden" type="button">
+              Download Verdict CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Result Table Preview</div>
+          <div class="table-wrap">
+            <table id="resultsTable">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-about">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">About the System</h1>
+          <p class="page-subtitle">Simple overview of how FraudSentinel works.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">About FraudSentinel</div>
+        <div class="text-card">
+          <p>
+            FraudSentinel is an AI-based fraud detection system that analyzes transaction data
+            and classifies each transaction as legitimate or fraudulent.
+          </p>
+
+          <p>
+            It uses an ensemble machine learning model combined with a risk adjustment layer
+            to calculate fraud probability and generate a final decision.
+          </p>
+
+          <p>
+            The system supports both single transaction analysis and CSV batch analysis,
+            providing outputs such as risk score, recommendation, explanation,
+            counterfactual insights, and financial impact.
+          </p>
+
+          <p>
+            All results shown are generated in real time from the connected backend model.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
